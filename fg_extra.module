@@ -1,0 +1,31 @@
+<?php
+
+/**
+ * @file fg_extra.module
+ */
+
+define('FIELDGROUPEXTRAJSPATH', drupal_get_path('module', 'fg_extra') . '/fg_extra.js');
+
+/**
+ * Implements hook_css_alter().
+ *
+ */
+function fg_extra_js_alter(&$js) {
+  if (module_exists('field_group')) {
+    $weight = $js[drupal_get_path('module', 'field_group') . '/field_group.js']['weight'];
+    $js[FIELDGROUPEXTRAJSPATH]['weight'] = $weight + 1;
+  }
+}
+
+/**
+ * Implements hook_form_alter().
+ *
+ *
+ */
+function fg_extra_form_alter(&$form, &$form_state, $form_id) {
+  if (module_exists('field_group')) {
+    $form['#attached']['js'][FIELDGROUPEXTRAJSPATH] = array(
+      'data' => FIELDGROUPEXTRAJSPATH,
+    );
+  }
+}

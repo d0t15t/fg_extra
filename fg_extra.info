@@ -1,0 +1,5 @@
+name = Field Group Extras
+description = extra functionality for field_group module
+core = 7.x
+
+dependencies[] = field_group
