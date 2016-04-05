@@ -3,7 +3,7 @@
     attach: function (context, settings) {
 
       function fieldGroup(){
-        console.log('init fg object')
+//        console.log('init fg object')
       }
 
       var fgSelector = 'field-group-tabs';
