@@ -31,4 +31,27 @@ function fg_extra_form_alter(&$form, &$form_state, $form_id) {
       'data' => FIELDGROUPEXTRAJSPATH,
     );
   }
+//  if ($form_id == 'person_node_form') {
+//    $form['#submit'][] = 'fg_extra_submit_handler';
+//
+//  }
 }
+
+
+function fg_extra_fieldset($variables) {
+  $t=1;
+}
+
+
+//function fg_extra_submit_handler($form, &$form_state) {
+//  $errors = form_get_errors();
+//  $cur = current_path();
+//  $t=1;
+//  $form_state['redirect'] = 'node/10';
+////  drupal_goto($cur,array('fragment' => 'comment-form'));
+////  $form_state['redirect'] = array(
+////    $cur,
+////    array('fragment' => 'comment-form'),
+////  );
+//  $t=1;
+//}

@@ -6,17 +6,19 @@
 //        console.log('init fg object')
       }
 
-      var fgSelector = 'field-group-tabs';
+      var fgSelectorVertical = 'field-group-tabs';
+      var fgSelectorHorizontal = 'field-group-htabs';
       var fgObject = new fieldGroup();
 
-      $('.'+fgSelector).on('initFGs', function() {
+//      $('.'+fgSelectorVertical + ', .'+fgSelectorHorizontal).on('initFGs', function(event) {
+      $('.'+fgSelectorVertical + ', .'+fgSelectorHorizontal).on('initFGs', function(event, buttonsSelector, fsSelector) {
         fgObject.hash = window.location.hash;
         var items = [];
         $(this).each(function(i) {
           var fg = $(this);
           items.push(fg);
           fg_extra_setTabfromHash(fg);
-          fg_extra_syncHashFromFG(fg, $('form'));
+          fg_extra_syncHashFromFG(fg, $('form'), buttonsSelector, fsSelector);
         });
         fgObject.items = items;
 
@@ -50,9 +52,9 @@
        * ensure that active fieldset tab is assigned as hash
        * ensure that hash persists on form submit
        */
-      function fg_extra_syncHashFromFG(group, form) {
-        var buttons = group.find('.vertical-tab-button');
-        var tabs = group.find('.vertical-tabs-panes > fieldset');
+      function fg_extra_syncHashFromFG(group, form, buttonsSelector, fsSelector) {
+        var buttons = group.find(buttonsSelector);
+        var tabs = group.find(fsSelector);
         var hash = window.location.hash;
         var formAction = form.attr('action');
         form.attr('action', formAction + hash);
@@ -66,19 +68,44 @@
               var id = tabs[index];
               var id = $(id).attr('id');
               form.attr('action', formAction + '#' + id);
-              var asdf;
               window.location.hash = id;
               fgObject.hash = id;
+              var asdf;
             }
           });
         });
       }
 
+      function fg_extra_syncHashToError()  {
+        var hash = window.location.hash;
+        if (hash.length == 0) {
+          var error = $('body').find('.error').last();
+          if (error.length > 0) {
+            var id;
+            if (error.attr('id')) {
+              id = error.attr('id');
+            } else {
+              id = Math.floor(Date.now() / 1000);
+              error.attr('id', id);
+            }
+            window.location.hash = id;
+          }
+        }
+      }
+
+
       $('body', context).once(function() {
         /*
-         init fg extra functionality
+         init fg extra vertical tabs functionality
          */
-        $('.'+fgSelector).trigger('initFGs');
+        $('.'+fgSelectorVertical).trigger('initFGs',
+          ['.vertical-tab-button', '.vertical-tabs-panes > fieldset']);
+//        $('.'+fgSelectorHorizontal).trigger('initFGs');
+        $('.'+fgSelectorHorizontal).trigger('initFGs',
+          ['.horizontal-tab-button', '.horizontal-tabs-panes > fieldset']);
+
+
+        fg_extra_syncHashToError();
 
         /*
         prevent ajax from re-loading to first tab, see LINE 66
