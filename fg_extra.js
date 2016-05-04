@@ -10,19 +10,27 @@
       var fgSelectorHorizontal = 'field-group-htabs';
       var fgObject = new fieldGroup();
 
-//      $('.'+fgSelectorVertical + ', .'+fgSelectorHorizontal).on('initFGs', function(event) {
-      $('.'+fgSelectorVertical + ', .'+fgSelectorHorizontal).on('initFGs', function(event, buttonsSelector, fsSelector) {
+      /**
+       * fg extra init - run on horiz. & vert. Tabs
+       */
+      $('.'+fgSelectorVertical + ', .'+fgSelectorHorizontal)
+        .on('initFGs', function(event, buttonsSelector, fsSelector) {
+
         fgObject.hash = window.location.hash;
         var items = [];
+        var fg = $(this);
+        items.push(fg);
+
+        fg_extra_setTabfromHash(fg);
+        fg_extra_syncHashFromFG(fg, $('form'), buttonsSelector, fsSelector);
+
         $(this).each(function(i) {
-          var fg = $(this);
-          items.push(fg);
-          fg_extra_setTabfromHash(fg);
-          fg_extra_syncHashFromFG(fg, $('form'), buttonsSelector, fsSelector);
         });
+
         fgObject.items = items;
 
       });
+
 
       /**
        * Set active tab in a fieldgroup based on the URL #Fragment
@@ -96,16 +104,17 @@
 
       $('body', context).once(function() {
         /*
-         init fg extra vertical tabs functionality
+         init fg extra vertical tabs functionality w/ specific selectors for
+         vertical & horizontal tab variations
          */
+//        $('.'+fgSelectorHorizontal).trigger('initFGs');
         $('.'+fgSelectorVertical).trigger('initFGs',
           ['.vertical-tab-button', '.vertical-tabs-panes > fieldset']);
-//        $('.'+fgSelectorHorizontal).trigger('initFGs');
         $('.'+fgSelectorHorizontal).trigger('initFGs',
           ['.horizontal-tab-button', '.horizontal-tabs-panes > fieldset']);
 
 
-        fg_extra_syncHashToError();
+//        fg_extra_syncHashToError();
 
         /*
         prevent ajax from re-loading to first tab, see LINE 66

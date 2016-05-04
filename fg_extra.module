@@ -7,23 +7,9 @@
 define('FIELDGROUPEXTRAJSPATH', drupal_get_path('module', 'fg_extra') . '/fg_extra.js');
 
 /**
- * Implements hook_css_alter().
- *
- */
-function fg_extra_js_alter(&$js) {
-  if (module_exists('field_group')) {
-    $path = drupal_get_path('module', 'field_group') . '/field_group.js';
-    if (isset($js[$path])) {
-      $weight = $js[$path]['weight'];
-      $js[FIELDGROUPEXTRAJSPATH]['weight'] = $weight + 1;
-    }
-  }
-}
-
-/**
  * Implements hook_form_alter().
  *
- *
+ * load fg_extra on forms
  */
 function fg_extra_form_alter(&$form, &$form_state, $form_id) {
   if (module_exists('field_group')) {
@@ -31,11 +17,21 @@ function fg_extra_form_alter(&$form, &$form_state, $form_id) {
       'data' => FIELDGROUPEXTRAJSPATH,
     );
   }
-//  if ($form_id == 'person_node_form') {
-//    $form['#submit'][] = 'fg_extra_submit_handler';
-//
-//  }
 }
+
+/**
+ * Implements hook_js_alter().
+ *
+ * ensure that fg_extra js loads after field_group js
+ */
+function fg_extra_js_alter(&$js) {
+  if (module_exists('field_group')) {
+    $weight = $js[drupal_get_path('module', 'field_group') . '/field_group.js']['weight'];
+    $js[FIELDGROUPEXTRAJSPATH]['weight'] = $weight + 1;
+  }
+}
+
+
 
 
 function fg_extra_fieldset($variables) {
