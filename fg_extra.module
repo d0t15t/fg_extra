@@ -26,7 +26,10 @@ function fg_extra_form_alter(&$form, &$form_state, $form_id) {
  */
 function fg_extra_js_alter(&$js) {
   if (module_exists('field_group')) {
-    $weight = $js[drupal_get_path('module', 'field_group') . '/field_group.js']['weight'];
-    $js[FIELDGROUPEXTRAJSPATH]['weight'] = $weight + 1;
+    $path = drupal_get_path('module', 'field_group') . '/field_group.js';
+    if (isset($js[$path]['weight'])) {
+      $weight = $js[drupal_get_path('module', 'field_group') . '/field_group.js']['weight'];
+      $js[FIELDGROUPEXTRAJSPATH]['weight'] = $weight + 1;
+    }
   }
 }

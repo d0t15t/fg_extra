@@ -10,42 +10,53 @@
       var fgSelectorHorizontal = 'field-group-htabs';
       var fgObject = new fieldGroup();
 
+
+
+
+
       /**
        * fg extra init - run on horiz. & vert. Tabs
        */
       $('.'+fgSelectorVertical + ', .'+fgSelectorHorizontal)
-        .on('initFGs', function(event, buttonsSelector, fsSelector) {
+        .on('initFGs', function(e, buttonsSelector, fsSelector) {
 
         fgObject.hash = window.location.hash;
         var items = [];
         var fg = $(this);
-        // set css ID is undefined
-        var fieldsets = fg.find(fsSelector);
-        $.each(fieldsets, function(i) {
-          var fset = $(this);
-          var id = fset.attr('id');
-          if (typeof id === 'undefined') {
-            fset.attr('id', 'fieldset-'+(i+1));
-          }
-        });
-        items.push(fg);
 
-        fg_extra_setHorizontalTab(fg, buttonsSelector, fsSelector);
+        // set css ID is undefined
+
+//        fg_extra_setHorizontalTab(fg, buttonsSelector, fsSelector);
+        fg.trigger('setIDs', [fsSelector]);
+
         fg_extra_syncHashFromFG(fg, $('form'), buttonsSelector, fsSelector);
 
+        // @TODO check if we need this
+        items.push(fg);
         fgObject.items = items;
       });
 
+      $('.'+fgSelectorVertical + ', .'+fgSelectorHorizontal)
+        .on('setIDs', function(e, fsSelector, fg) {
+          var fg = $(this);
+          var fieldsets = fg.find(fsSelector);
+          $.each(fieldsets, function(i) {
+            var fset = $(this);
+            var id = fset.attr('id');
+            if (typeof id === 'undefined') {
+              fset.attr('id', 'fieldset-'+(i+1));
+            }
+          });
 
-      /**
-       * Set active tab in a fieldgroup based on the URL #Fragment
-       * if a fieldset contains the field referenced by the ID, make sure it is open
-       */
-      function fg_extra_setHorizontalTab(group, buttonsSelector, fsSelector) {
+        });
+
+      $('.'+fgSelectorVertical).on('setVerticalTab', function(e, buttonsSelector, fsSelector){
+        console.log('set vert');
         if(window.location.hash) {
           var hash = window.location.hash;
-          var targetSet = $(hash).length > 0
-            ? $(hash) : $(hash).parents('fieldset');
+          var targetSet = $(hash);
+//          var targetSet = $(hash).length > 0
+//            ? $(hash) : $(hash).parents('fieldset');
 //          var targetset = $(hash);
           var asdf;
           console.log('id is ' + $(hash).attr('id'));
@@ -61,6 +72,57 @@
           curButton.toggleClass('selected');
           $(targetButton).toggleClass('selected');
         }
+
+      });
+
+      /**
+       * set horizontal tab based on hash
+       */
+      $('.'+fgSelectorHorizontal).on('setHorizontalTab', function(e, buttonsSelector, fsSelector){
+        if(window.location.hash) {
+          var fg = $('.'+fgSelectorHorizontal);
+          var hash = window.location.hash;
+          var targetSet = $(hash).length > 0
+            ? $(hash) : $(hash).parents('fieldset');
+          if (targetSet.length == 0) return false;
+          var targetIndex = targetSet.index();
+          var curButton = fg.find(buttonsSelector+'.selected');
+//          var curIndex = curButton.index();
+//          var tabs = targetSet.siblings('fieldset').andSelf();
+//          var curSet = tabs[curIndex];
+          var targetButton = fg.find(buttonsSelector)[targetIndex];
+//          $(curSet).css({ 'display' : 'none' });
+//          targetSet.css({ 'display' : 'table-cell' });
+          curButton.toggleClass('selected');
+          $(targetButton).toggleClass('selected');
+        }
+      });
+
+      /**
+       * Set active tab in a fieldfg based on the URL #Fragment
+       * if a fieldset contains the field referenced by the ID, make sure it is open
+       */
+      function fg_extra_setHorizontalTab(group, buttonsSelector, fsSelector) {
+//        if(window.location.hash) {
+//          var hash = window.location.hash;
+//          var targetSet = $(hash);
+////          var targetSet = $(hash).length > 0
+////            ? $(hash) : $(hash).parents('fieldset');
+////          var targetset = $(hash);
+//          var asdf;
+//          console.log('id is ' + $(hash).attr('id'));
+//          if (targetSet.length == 0) return false;
+//          var targetIndex = targetSet.index() - 1;
+//          var curButton = group.find(buttonsSelector+'.selected');
+//          var curIndex = curButton.index();
+//          var tabs = targetSet.siblings('fieldset').andSelf();
+//          var curSet = tabs[curIndex];
+//          var targetButton = group.find(buttonsSelector)[targetIndex];
+//          $(curSet).css({ 'display' : 'none' });
+//          targetSet.css({ 'display' : 'table-cell' });
+//          curButton.toggleClass('selected');
+//          $(targetButton).toggleClass('selected');
+//        }
       }
 
       /**
@@ -111,6 +173,7 @@
       }
 
 
+
       $('body', context).once(function() {
         /*
          init fg extra vertical tabs functionality w/ specific selectors for
@@ -122,19 +185,25 @@
         $('.'+fgSelectorHorizontal).trigger('initFGs',
           ['.horizontal-tab-button', '.horizontal-tabs-panes > fieldset']);
 
+        $('.'+fgSelectorVertical).trigger('setVerticalTab',
+          ['.vertical-tab-button', '.vertical-tabs-panes > fieldset']);
+        $('.'+fgSelectorHorizontal).trigger('setHorizontalTab',
+          ['.horizontal-tab-button', '.horizontal-tabs-panes > fieldset']);
 
 //        fg_extra_syncHashToError();
 
         /*
-        prevent ajax from re-loading to first tab, see LINE 66
-        * re-run fg-extra tab set
-        ** @note - not sure if the reload is a 'default' ajax functionality or
-        * an event from fieldgroups? or drupal forms?
+         prevent ajax from re-loading to first tab, see LINE 66
+         * re-run fg-extra tab set
+         ** @note - not sure if the reload is a 'default' ajax functionality or
+         * an event from fieldgroups? or drupal forms?
          */
         $(document).ajaxComplete(function(e) {
           fg_extra_setHorizontalTab(fgObject.items[0]);
         });
       });
+
+
 
     }
   };
