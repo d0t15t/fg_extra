@@ -10,48 +10,49 @@
       var fgSelectorHorizontal = 'field-group-htabs';
       var fgObject = new fieldGroup();
 
-
+      var fgObjects = $('.'+fgSelectorVertical + ', .'+fgSelectorHorizontal);
 
 
 
       /**
        * fg extra init - run on horiz. & vert. Tabs
        */
-      $('.'+fgSelectorVertical + ', .'+fgSelectorHorizontal)
-        .on('initFGs', function(e, buttonsSelector, fsSelector) {
+      fgObjects.on('initFGs', function(e, buttonsSelector, fsSelector) {
 
         fgObject.hash = window.location.hash;
         var items = [];
         var fg = $(this);
 
-        // set css ID is undefined
-
-//        fg_extra_setHorizontalTab(fg, buttonsSelector, fsSelector);
+        // set css ID if undefined
         fg.trigger('setIDs', [fsSelector]);
-
+        // sync hash
         fg_extra_syncHashFromFG(fg, $('form'), buttonsSelector, fsSelector);
-
         // @TODO check if we need this
         items.push(fg);
         fgObject.items = items;
+
       });
 
-      $('.'+fgSelectorVertical + ', .'+fgSelectorHorizontal)
-        .on('setIDs', function(e, fsSelector, fg) {
-          var fg = $(this);
-          var fieldsets = fg.find(fsSelector);
-          $.each(fieldsets, function(i) {
-            var fset = $(this);
-            var id = fset.attr('id');
-            if (typeof id === 'undefined') {
-              fset.attr('id', 'fieldset-'+(i+1));
-            }
-          });
-
+      /**
+       * set IDS on fg panels
+       */
+      fgObjects.on('setIDs', function(e, fsSelector, fg) {
+        var fg = $(this);
+        var fieldsets = fg.find(fsSelector);
+        $.each(fieldsets, function(i) {
+          var fset = $(this);
+          var id = fset.attr('id');
+          if (typeof id === 'undefined') {
+            fset.attr('id', 'fieldset-'+(i+1));
+          }
         });
+      });
 
+      /**
+       * set Vertical Tab
+       */
       $('.'+fgSelectorVertical).on('setVerticalTab', function(e, buttonsSelector, fsSelector){
-        console.log('set vert');
+//        console.log('set vert');
         if(window.location.hash) {
           var hash = window.location.hash;
           var targetSet = $(hash);
@@ -87,12 +88,13 @@
           if (targetSet.length == 0) return false;
           var targetIndex = targetSet.index();
           var curButton = fg.find(buttonsSelector+'.selected');
-//          var curIndex = curButton.index();
-//          var tabs = targetSet.siblings('fieldset').andSelf();
-//          var curSet = tabs[curIndex];
+          var curIndex = curButton.index();
+          console.log('go horiz')
+          var tabs = targetSet.siblings('fieldset').andSelf();
+          var curSet = tabs[curIndex];
           var targetButton = fg.find(buttonsSelector)[targetIndex];
-//          $(curSet).css({ 'display' : 'none' });
-//          targetSet.css({ 'display' : 'table-cell' });
+          $(curSet).toggleClass('horizontal-tab-hidden');
+          targetSet.toggleClass('horizontal-tab-hidden');
           curButton.toggleClass('selected');
           $(targetButton).toggleClass('selected');
         }
