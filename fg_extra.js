@@ -54,20 +54,18 @@
       $('.'+fgSelectorVertical).on('setVerticalTab', function(e, buttonsSelector, fsSelector){
 //        console.log('set vert');
         if(window.location.hash) {
+          var fg = $('.'+fgSelectorVertical);
           var hash = window.location.hash;
           var targetSet = $(hash);
-//          var targetSet = $(hash).length > 0
-//            ? $(hash) : $(hash).parents('fieldset');
-//          var targetset = $(hash);
-          var asdf;
-          console.log('id is ' + $(hash).attr('id'));
           if (targetSet.length == 0) return false;
           var targetIndex = targetSet.index() - 1;
-          var curButton = group.find(buttonsSelector+'.selected');
+//          var curButton = group.find(buttonsSelector+'.selected');
+          var curButton = fg.find(buttonsSelector+'.selected');
           var curIndex = curButton.index();
           var tabs = targetSet.siblings('fieldset').andSelf();
           var curSet = tabs[curIndex];
-          var targetButton = group.find(buttonsSelector)[targetIndex];
+//          var targetButton = group.find(buttonsSelector)[targetIndex];
+          var targetButton = fg.find(buttonsSelector)[targetIndex];
           $(curSet).css({ 'display' : 'none' });
           targetSet.css({ 'display' : 'table-cell' });
           curButton.toggleClass('selected');
@@ -89,7 +87,6 @@
           var targetIndex = targetSet.index();
           var curButton = fg.find(buttonsSelector+'.selected');
           var curIndex = curButton.index();
-          console.log('go horiz')
           var tabs = targetSet.siblings('fieldset').andSelf();
           var curSet = tabs[curIndex];
           var targetButton = fg.find(buttonsSelector)[targetIndex];
