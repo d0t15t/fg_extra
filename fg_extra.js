@@ -198,7 +198,9 @@
          * an event from fieldgroups? or drupal forms?
          */
         $(document).ajaxComplete(function(e) {
-          fg_extra_setHorizontalTab(fgObject.items[0]);
+          if(fgObject.items) {
+            fg_extra_setHorizontalTab(fgObject.items[0]);
+          }
         });
       });
 
